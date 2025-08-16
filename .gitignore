@@ -4,6 +4,8 @@
 # intellij idea sets
 .idea/
 
+.kotlin/
+
 *.iml
 .gradle
 /local.properties
