@@ -9,17 +9,18 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.sejun2.trippath.domain.model.OauthProvider
+import com.sejun2.trippath.presentation.viewmodel.AuthViewModel
 
 @Composable
 fun IntroRoute(
     modifier: Modifier = Modifier,
-    onNavigateToMain: () -> Unit = {},
-    onBack: () -> Unit = {}
+    authViewModel: AuthViewModel = viewModel<AuthViewModel>(),
 ) {
     IntroScreen(
         modifier,
-        onNavigateToMain,
-        onBack
+        authViewModel::loginWithOauth
     )
 
 }
@@ -27,8 +28,7 @@ fun IntroRoute(
 @Composable
 fun IntroScreen(
     modifier: Modifier = Modifier,
-    onNavigateToMain: () -> Unit = {},
-    onBack: () -> Unit = {}
+    loginWithOauth: (OauthProvider) -> Unit,
 ) {
     Surface {
         // Sample composable
@@ -37,18 +37,19 @@ fun IntroScreen(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(text = "Intro Screen")
             TextButton(
                 onClick = {
-                    onNavigateToMain()
+                    loginWithOauth(OauthProvider.GOOGLE)
                 }
             ) {
-                Text(text = "Go to Main")
+                Text("구글 로그인")
             }
             TextButton(
-                onClick = onBack
+                onClick = {
+                    loginWithOauth(OauthProvider.KAKAO)
+                }
             ) {
-                Text(text = "Go Back")
+                Text("카카오 로그인")
             }
         }
     }
@@ -57,6 +58,8 @@ fun IntroScreen(
 @Preview(showSystemUi = true)
 @Composable
 fun IntroScreenPreview() {
-    IntroScreen()
+    IntroScreen(
+        loginWithOauth = {}
+    )
 }
 

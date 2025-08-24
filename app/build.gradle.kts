@@ -1,10 +1,13 @@
+import com.android.build.shrinker.NoDebugReporter.debug
+import org.gradle.kotlin.dsl.invoke
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.hilt)
-    kotlin("kapt")
-    alias(libs.plugins.jetbrains.kotlin.serialization)
+    id("com.google.devtools.ksp")
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -39,6 +42,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 }
 
@@ -58,12 +62,36 @@ dependencies {
     implementation(libs.androidx.navigation3.runtime)
     implementation(libs.androidx.lifecycle.viewmodel.navigation3)
 //    implementation(libs.androidx.material3.adaptive.navigation3)
-    implementation(libs.kotlinx.serialization.core)
-    
+
     // Hilt
     implementation(libs.hilt.android)
-    kapt(libs.hilt.compiler)
-    
+    ksp(libs.hilt.compiler)
+
+    // Datastore
+    implementation(libs.androidx.datastore.core)
+    implementation(libs.androidx.datastore.preferences)
+
+    // Network
+    implementation(libs.retrofit.core)
+    implementation(libs.retrofit.moshi)
+    implementation(libs.okhttp.core)
+    implementation(libs.okhttp.logging)
+    implementation(libs.moshi.core)
+    implementation(libs.moshi.kotlin)
+    ksp(libs.moshi.codegen)
+
+    // Logger
+    implementation(libs.timber)
+
+    // Google credential
+    implementation(libs.androidx.credentials)
+    implementation(libs.credentials.play.services.auth)
+    implementation(libs.googleid)
+
+    // Firebase BOM
+    implementation(libs.firebase.bom)
+
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

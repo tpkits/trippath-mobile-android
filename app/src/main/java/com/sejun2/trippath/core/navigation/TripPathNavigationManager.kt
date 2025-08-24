@@ -29,12 +29,6 @@ fun rememberTripPathAppState(): TripPathAppState {
         entry<IntroNavKey> {
             IntroRoute(
                 modifier = Modifier,
-                onNavigateToMain = {
-                    navBackStack.add(MainNavKey)
-                },
-                onBack = {
-                    navBackStack.back()
-                }
             )
         }
         entry<MainNavKey> {

@@ -18,7 +18,9 @@ import com.sejun2.trippath.core.extension.back
 import com.sejun2.trippath.core.navigation.TripPathAppState
 import com.sejun2.trippath.core.navigation.rememberTripPathAppState
 import com.sejun2.trippath.presentation.ui.theme.TripPathTheme
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
