@@ -17,4 +17,8 @@ interface IAuthRepository {
     fun refreshToken(refreshToken: String): Flow<LoginResponse>
 
     fun getUserInfo(): Flow<String>
+
+    suspend fun logout()
+
+    suspend fun initializeSession()
 }

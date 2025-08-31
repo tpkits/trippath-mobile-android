@@ -46,16 +46,16 @@ class AuthRepositoryImpl @Inject constructor(
         val response = authApiService.mobileLogin("google", LoginRequest(idToken = token))
         if (response.isSuccessful && response.body() != null) {
             val loginResponse = response.body()!!
-            
+
             // 토큰 저장
             tokenDataStore.saveTokens(loginResponse.accessToken, loginResponse.refreshToken)
-            
+
             // 세션 상태 업데이트
             sessionManager.updateLoginState(
                 isLoggedIn = true,
                 loginResponse = loginResponse
             )
-            
+
             emit(loginResponse)
         } else {
             throw Exception("로그인 실패: ${response.code()}")
@@ -66,13 +66,13 @@ class AuthRepositoryImpl @Inject constructor(
         val response = authApiService.reissueToken()
         if (response.isSuccessful && response.body() != null) {
             val loginResponse = response.body()!!
-            
+
             // 새로운 토큰 저장
             tokenDataStore.saveTokens(loginResponse.accessToken, loginResponse.refreshToken)
-            
+
             // 세션 토큰 업데이트
             sessionManager.updateTokens(loginResponse.accessToken, loginResponse.refreshToken)
-            
+
             emit(loginResponse)
         } else {
             throw Exception("토큰 갱신 실패: ${response.code()}")
@@ -83,25 +83,25 @@ class AuthRepositoryImpl @Inject constructor(
         val response = authApiService.getUserInfo()
         if (response.isSuccessful && response.body() != null) {
             val userInfo = response.body()!!
-            
+
             // 세션에 사용자 정보 저장
             sessionManager.updateUserInfo(userInfo)
-            
+
             emit("${userInfo.name} (${userInfo.email})")
         } else {
             throw Exception("사용자 정보 조회 실패: ${response.code()}")
         }
     }
-    
-    suspend fun logout() {
+
+    override suspend fun logout() {
         try {
             // API 로그아웃 호출
             val response = authApiService.mobileLogout()
-            
+
             // 성공 여부와 관계없이 로컬 데이터 정리
             tokenDataStore.clearTokens()
             sessionManager.logout()
-            
+
         } catch (e: Exception) {
             // 네트워크 오류여도 로컬 데이터는 정리
             tokenDataStore.clearTokens()
@@ -109,11 +109,11 @@ class AuthRepositoryImpl @Inject constructor(
             throw e
         }
     }
-    
-    suspend fun initializeSession() {
+
+    override suspend fun initializeSession() {
         val accessToken = tokenDataStore.getAccessToken()
         val refreshToken = tokenDataStore.getRefreshToken()
-        
+
         if (!accessToken.isNullOrEmpty() && !refreshToken.isNullOrEmpty()) {
             sessionManager.updateTokens(accessToken, refreshToken)
             sessionManager.updateLoginState(isLoggedIn = true)

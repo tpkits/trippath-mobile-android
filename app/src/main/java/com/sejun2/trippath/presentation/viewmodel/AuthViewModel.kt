@@ -18,7 +18,6 @@ import javax.inject.Inject
 @HiltViewModel
 class AuthViewModel @Inject constructor(
     private val authRepository: IAuthRepository,
-    private val authRepositoryImpl: AuthRepositoryImpl,
     val sessionManager: SessionManager
 ) : ViewModel() {
 
@@ -28,7 +27,7 @@ class AuthViewModel @Inject constructor(
     init {
         // 앱 시작시 저장된 토큰으로 세션 초기화
         viewModelScope.launch {
-            authRepositoryImpl.initializeSession()
+            authRepository.initializeSession()
         }
     }
 
@@ -99,7 +98,7 @@ class AuthViewModel @Inject constructor(
     fun logout() {
         viewModelScope.launch {
             try {
-                authRepositoryImpl.logout()
+                authRepository.logout()
                 _uiState.value = AuthUiState()
             } catch (e: Exception) {
                 _uiState.value = _uiState.value.copy(
