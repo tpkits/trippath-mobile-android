@@ -11,7 +11,7 @@ interface IAuthRepository {
     fun loginWithOauth(provider: OauthProvider): Flow<String>
 
     // 로그인
-    fun login(token: String): Flow<LoginResponse>
+    fun login(token: String, provider: OauthProvider): Flow<LoginResponse>
 
     // 토큰 리프레시
     fun refreshToken(refreshToken: String): Flow<LoginResponse>

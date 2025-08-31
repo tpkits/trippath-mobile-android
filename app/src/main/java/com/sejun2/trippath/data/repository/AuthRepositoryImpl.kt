@@ -2,6 +2,7 @@ package com.sejun2.trippath.data.repository
 
 import android.util.Log
 import com.sejun2.trippath.data.auth.GoogleCredentialService
+import com.sejun2.trippath.data.auth.KakaoAuthService
 import com.sejun2.trippath.data.local.TokenDataStore
 import com.sejun2.trippath.data.network.api.AuthApiService
 import com.sejun2.trippath.data.network.dto.request.LoginRequest
@@ -11,6 +12,7 @@ import com.sejun2.trippath.domain.model.OauthProvider
 import com.sejun2.trippath.domain.repository.IAuthRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -18,6 +20,7 @@ import javax.inject.Singleton
 class AuthRepositoryImpl @Inject constructor(
     private val authApiService: AuthApiService,
     private val googleCredentialService: GoogleCredentialService,
+    private val kakaoAuthService: KakaoAuthService,
     private val sessionManager: SessionManager,
     private val tokenDataStore: TokenDataStore
 ) : IAuthRepository {
@@ -33,7 +36,11 @@ class AuthRepositoryImpl @Inject constructor(
             }
 
             OauthProvider.KAKAO -> {
-                throw NotImplementedError("Kakao 로그인이 아직 구현되지 않았습니다.")
+                val result = kakaoAuthService.loginWithKakaoAccount()
+                result.fold(
+                    onSuccess = { token -> emit(token.idToken.toString()) },
+                    onFailure = { exception -> throw exception }
+                )
             }
 
             OauthProvider.APPLE -> {
@@ -42,8 +49,8 @@ class AuthRepositoryImpl @Inject constructor(
         }
     }
 
-    override fun login(token: String): Flow<LoginResponse> = flow {
-        val response = authApiService.mobileLogin("google", LoginRequest(idToken = token))
+    override fun login(token: String, provider: OauthProvider): Flow<LoginResponse> = flow {
+        val response = authApiService.mobileLogin(provider.value, LoginRequest(idToken = token))
         if (response.isSuccessful && response.body() != null) {
             val loginResponse = response.body()!!
 

@@ -13,6 +13,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
@@ -34,29 +35,33 @@ class AuthViewModel @Inject constructor(
     fun loginWithOauth(provider: OauthProvider) {
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(isLoading = true, error = null)
-            
+
             authRepository.loginWithOauth(provider)
                 .catch { exception ->
+                    Timber.d("OAuth 로그인 실패: $exception")
                     _uiState.value = _uiState.value.copy(
                         isLoading = false,
                         error = exception.message ?: "OAuth 로그인 실패"
                     )
                 }
                 .collect { oauthToken ->
-                    performLogin(oauthToken)
+                    Timber.d("OAuth 로그인 성공: $oauthToken")
+                    performLogin(oauthToken, provider)
                 }
         }
     }
 
-    private suspend fun performLogin(token: String) {
-        authRepository.login(token)
+    private suspend fun performLogin(token: String, provider: OauthProvider) {
+        authRepository.login(token, provider)
             .catch { exception ->
+                Timber.e("로그인 실패: $exception")
                 _uiState.value = _uiState.value.copy(
                     isLoading = false,
                     error = exception.message ?: "로그인 실패"
                 )
             }
             .collect { loginResponse ->
+                Timber.d("로그인 성공: $loginResponse")
                 _uiState.value = _uiState.value.copy(
                     isLoading = false
                 )

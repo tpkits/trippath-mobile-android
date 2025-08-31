@@ -91,6 +91,9 @@ dependencies {
     // Firebase BOM
     implementation(libs.firebase.bom)
 
+    // 카카오 로그인 API 모듈
+    implementation(libs.kakao.v2.user)
+
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

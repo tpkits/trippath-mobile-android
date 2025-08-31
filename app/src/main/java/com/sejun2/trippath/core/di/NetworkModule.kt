@@ -2,6 +2,7 @@ package com.sejun2.trippath.core.di
 
 import android.content.Context
 import com.sejun2.trippath.data.auth.GoogleCredentialService
+import com.sejun2.trippath.data.auth.KakaoAuthService
 import com.sejun2.trippath.data.local.TokenDataStore
 import com.sejun2.trippath.data.network.api.AuthApiService
 import com.sejun2.trippath.data.network.client.NetworkClient
@@ -21,7 +22,7 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object NetworkModule {
-    
+
     @Provides
     @Singleton
     fun provideMoshi(): Moshi {
@@ -29,7 +30,7 @@ object NetworkModule {
             .add(KotlinJsonAdapterFactory())
             .build()
     }
-    
+
     @Provides
     @Singleton
     fun provideAuthApiService(
@@ -37,7 +38,7 @@ object NetworkModule {
     ): AuthApiService {
         return networkClient.createApiService<AuthApiService>()
     }
-    
+
     @Provides
     @Singleton
     fun provideGoogleCredentialService(
@@ -45,13 +46,21 @@ object NetworkModule {
     ): GoogleCredentialService {
         return GoogleCredentialService(context)
     }
-    
+
     @Provides
     @Singleton
     fun provideTokenDataStore(
         @ApplicationContext context: Context
     ): TokenDataStore {
         return TokenDataStore(context)
+    }
+
+    @Provides
+    @Singleton
+    fun provideKakaoAuthService(
+        @ApplicationContext context: Context
+    ): KakaoAuthService {
+        return KakaoAuthService(context)
     }
 }
 
