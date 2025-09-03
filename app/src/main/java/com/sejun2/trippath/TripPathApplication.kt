@@ -2,12 +2,9 @@ package com.sejun2.trippath
 
 import android.app.Application
 import com.kakao.sdk.common.KakaoSdk
-import com.kakao.sdk.common.util.Utility
 import dagger.hilt.android.HiltAndroidApp
-import timber.log.Timber
 import timber.log.Timber.DebugTree
 import timber.log.Timber.Forest.plant
-
 
 @HiltAndroidApp
 class TripPathApplication : Application() {

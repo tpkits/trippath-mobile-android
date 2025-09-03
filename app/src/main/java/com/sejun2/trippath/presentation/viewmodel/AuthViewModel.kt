@@ -8,6 +8,7 @@ import com.sejun2.trippath.domain.auth.SessionManager
 import com.sejun2.trippath.domain.model.OauthProvider
 import com.sejun2.trippath.domain.repository.IAuthRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow

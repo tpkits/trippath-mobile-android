@@ -1,6 +1,3 @@
-import com.android.build.shrinker.NoDebugReporter.debug
-import org.gradle.kotlin.dsl.invoke
-
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -25,8 +22,15 @@ android {
     }
 
     buildTypes {
+        debug {
+            isMinifyEnabled = true
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
+        }
         release {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -57,21 +61,21 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
 
-    // Android navigation3
+// Android navigation3
     implementation(libs.androidx.navigation3.ui)
     implementation(libs.androidx.navigation3.runtime)
     implementation(libs.androidx.lifecycle.viewmodel.navigation3)
 //    implementation(libs.androidx.material3.adaptive.navigation3)
 
-    // Hilt
+// Hilt
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
 
-    // Datastore
+// Datastore
     implementation(libs.androidx.datastore.core)
     implementation(libs.androidx.datastore.preferences)
 
-    // Network
+// Network
     implementation(libs.retrofit.core)
     implementation(libs.retrofit.moshi)
     implementation(libs.okhttp.core)
@@ -80,20 +84,20 @@ dependencies {
     implementation(libs.moshi.kotlin)
     ksp(libs.moshi.codegen)
 
-    // Logger
+// Logger
     implementation(libs.timber)
 
-    // Google credential
+// Google credential
     implementation(libs.androidx.credentials)
     implementation(libs.credentials.play.services.auth)
     implementation(libs.googleid)
 
-    // Firebase BOM
+// Firebase BOM
     implementation(libs.firebase.bom)
 
-    // 카카오 로그인 API 모듈
+    // KAKAO
+// 카카오 로그인 API 모듈
     implementation(libs.kakao.v2.user)
-
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
