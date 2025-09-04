@@ -42,10 +42,6 @@ class AuthRepositoryImpl @Inject constructor(
                     onFailure = { exception -> throw exception }
                 )
             }
-
-            OauthProvider.APPLE -> {
-                throw NotImplementedError("Apple 로그인이 아직 구현되지 않았습니다.")
-            }
         }
     }
 
