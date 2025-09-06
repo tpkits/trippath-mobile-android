@@ -1,15 +1,14 @@
 package com.sejun2.trippath.presentation.ui.theme
 
 import android.app.Activity
-import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.dynamicDarkColorScheme
-import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.remember
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.graphics.toArgb
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 
@@ -29,7 +28,7 @@ fun TripPathTheme(
         darkTheme -> DarkColorScheme
         else -> LightColorScheme
     }
-    
+
     val view = LocalView.current
     if (!view.isInEditMode) {
         SideEffect {
@@ -39,9 +38,27 @@ fun TripPathTheme(
         }
     }
 
+    DynamicStatusBarController(colorScheme.background)
+
     MaterialTheme(
         colorScheme = colorScheme,
         typography = Typography,
         content = content
     )
+}
+
+@Composable
+fun DynamicStatusBarController(backgroundColor: Color) {
+    val view = LocalView.current
+    val isLightBackground = remember(backgroundColor) {
+        backgroundColor.luminance() > 0.5f
+    }
+
+    SideEffect {
+        val window = (view.context as android.app.Activity).window
+        val windowInsetsController = WindowCompat.getInsetsController(window, view)
+
+        windowInsetsController.isAppearanceLightStatusBars = isLightBackground
+        windowInsetsController.isAppearanceLightNavigationBars = isLightBackground
+    }
 }
