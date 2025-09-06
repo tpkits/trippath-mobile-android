@@ -57,9 +57,9 @@ fun TripPathMainAppBar(
     Box(
         modifier = modifier
             .fillMaxWidth()
+            .background(backgroundColor)
             .height(TripPathConstants.APP_BAR_HEIGHT)
-            .padding(paddingValues)
-            .background(backgroundColor),
+            .padding(paddingValues),
         contentAlignment = Alignment.Center
     ) {
         Row {
