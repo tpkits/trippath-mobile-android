@@ -38,7 +38,7 @@ fun TripPathTheme(
         }
     }
 
-    DynamicStatusBarController(colorScheme.background)
+//    DynamicStatusBarController(colorScheme.background)
 
     MaterialTheme(
         colorScheme = colorScheme,
@@ -55,7 +55,7 @@ fun DynamicStatusBarController(backgroundColor: Color) {
     }
 
     SideEffect {
-        val window = (view.context as android.app.Activity).window
+        val window = (view.context as Activity).window
         val windowInsetsController = WindowCompat.getInsetsController(window, view)
 
         windowInsetsController.isAppearanceLightStatusBars = isLightBackground
