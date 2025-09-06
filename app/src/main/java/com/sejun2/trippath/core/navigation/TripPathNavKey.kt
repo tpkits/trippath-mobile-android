@@ -10,3 +10,6 @@ data object IntroNavKey : TripPathNavKey
 
 @Serializable
 data object MainNavKey : TripPathNavKey
+
+@Serializable
+data object HomeNavKey : TripPathNavKey

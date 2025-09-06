@@ -12,7 +12,6 @@ import com.sejun2.trippath.domain.model.OauthProvider
 import com.sejun2.trippath.domain.repository.IAuthRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
 

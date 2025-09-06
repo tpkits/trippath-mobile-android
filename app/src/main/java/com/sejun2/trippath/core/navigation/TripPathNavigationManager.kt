@@ -1,5 +1,6 @@
 package com.sejun2.trippath.core.navigation
 
+import HomeRoute
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
@@ -25,6 +26,7 @@ fun rememberTripPathAppState(): TripPathAppState {
 
     // entryProvider
     // 이곳에서 네비게이션 라우트를 관리합니다.
+    // TODO: EntryProvider 을 별도로 분리
     val entryProvider = entryProvider<TripPathNavKey> {
         entry<IntroNavKey> {
             IntroRoute(
@@ -33,6 +35,11 @@ fun rememberTripPathAppState(): TripPathAppState {
         }
         entry<MainNavKey> {
             Text("This is sample main screen")
+        }
+        entry<HomeNavKey> {
+            HomeRoute(
+                modifier = Modifier
+            )
         }
     }
 
