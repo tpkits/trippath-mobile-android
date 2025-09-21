@@ -6,12 +6,8 @@ import com.sejun2.trippath.data.auth.KakaoAuthService
 import com.sejun2.trippath.data.local.TokenDataStore
 import com.sejun2.trippath.data.network.api.AuthApiService
 import com.sejun2.trippath.data.network.client.NetworkClient
-import com.sejun2.trippath.data.repository.AuthRepositoryImpl
-import com.sejun2.trippath.domain.auth.SessionManager
-import com.sejun2.trippath.domain.repository.IAuthRepository
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
-import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -42,9 +38,8 @@ object NetworkModule {
     @Provides
     @Singleton
     fun provideGoogleCredentialService(
-        @ApplicationContext context: Context
     ): GoogleCredentialService {
-        return GoogleCredentialService(context)
+        return GoogleCredentialService()
     }
 
     @Provides

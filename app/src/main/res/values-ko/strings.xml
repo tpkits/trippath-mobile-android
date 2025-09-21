@@ -6,4 +6,5 @@
     <string name="navigation_bookmark">북마크</string>
     <string name="navigation_bills">비용</string>
     <string name="navigation_profile">계정</string>
+    <string name="skip">건너뛰기</string>
 </resources>

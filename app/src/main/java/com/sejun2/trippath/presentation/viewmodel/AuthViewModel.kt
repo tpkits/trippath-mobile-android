@@ -1,14 +1,15 @@
 package com.sejun2.trippath.presentation.viewmodel
 
+import android.content.Context
 import androidx.compose.runtime.Stable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.sejun2.trippath.data.repository.AuthRepositoryImpl
+import com.sejun2.trippath.data.auth.GoogleCredentialService
+import com.sejun2.trippath.data.auth.KakaoAuthService
 import com.sejun2.trippath.domain.auth.SessionManager
 import com.sejun2.trippath.domain.model.OauthProvider
 import com.sejun2.trippath.domain.repository.IAuthRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -20,36 +21,53 @@ import javax.inject.Inject
 @HiltViewModel
 class AuthViewModel @Inject constructor(
     private val authRepository: IAuthRepository,
-    val sessionManager: SessionManager
+    val sessionManager: SessionManager,
+    private val googleCredentialService: GoogleCredentialService,
+    private val kakaoAuthService: KakaoAuthService
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(AuthUiState())
     val uiState: StateFlow<AuthUiState> = _uiState.asStateFlow()
 
     init {
-        // 앱 시작시 저장된 토큰으로 세션 초기화
         viewModelScope.launch {
             authRepository.initializeSession()
         }
     }
 
-    fun loginWithOauth(provider: OauthProvider) {
+    fun loginWithOauth(provider: OauthProvider, activityContext: Context) {
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(isLoading = true, error = null)
 
-            authRepository.loginWithOauth(provider)
-                .catch { exception ->
-                    Timber.d("OAuth 로그인 실패: $exception")
-                    _uiState.value = _uiState.value.copy(
-                        isLoading = false,
-                        error = exception.message ?: "OAuth 로그인 실패"
-                    )
-                }
-                .collect { oauthToken ->
-                    Timber.d("OAuth 로그인 성공: $oauthToken")
-                    performLogin(oauthToken, provider)
-                }
+            when (provider) {
+                OauthProvider.GOOGLE -> signInWithGoogle(activityContext)
+                OauthProvider.KAKAO -> signInWithKakao()
+            }
         }
+    }
+
+    private suspend fun signInWithGoogle(activityContext: Context) {
+        googleCredentialService.getGoogleIdToken(activityContext)
+            .onFailure { exception ->
+                _uiState.value = _uiState.value.copy(
+                    isLoading = false,
+                    error = exception.message ?: "Google 로그인 실패"
+                )
+            }.onSuccess {
+                performLogin(it, OauthProvider.GOOGLE)
+            }
+    }
+
+    private suspend fun signInWithKakao() {
+        kakaoAuthService.loginWithKakaoAccount()
+            .onFailure { exception ->
+                _uiState.value = _uiState.value.copy(
+                    isLoading = false,
+                    error = exception.message ?: "Kakao 로그인 실패"
+                )
+            }.onSuccess {
+                performLogin(it.idToken.toString(), OauthProvider.KAKAO)
+            }
     }
 
     private suspend fun performLogin(token: String, provider: OauthProvider) {
@@ -64,9 +82,9 @@ class AuthViewModel @Inject constructor(
             .collect { loginResponse ->
                 Timber.d("로그인 성공: $loginResponse")
                 _uiState.value = _uiState.value.copy(
-                    isLoading = false
+                    isLoading = false,
+                    success = true,
                 )
-                // 로그인 상태는 SessionManager에서 관리
             }
     }
 
@@ -122,5 +140,6 @@ class AuthViewModel @Inject constructor(
 @Stable
 data class AuthUiState(
     val isLoading: Boolean = false,
-    val error: String? = null
+    val error: String? = null,
+    val success: Boolean? = null
 )

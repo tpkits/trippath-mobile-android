@@ -1,5 +1,6 @@
 package com.sejun2.trippath.presentation.ui.screen.auth
 
+import android.content.Context
 import android.content.res.Configuration
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -13,45 +14,58 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.systemBars
-import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.sejun2.trippath.R
 import com.sejun2.trippath.domain.model.OauthProvider
 import com.sejun2.trippath.presentation.ui.theme.TripPathColors
 import com.sejun2.trippath.presentation.ui.theme.TripPathTheme
 import com.sejun2.trippath.presentation.ui.theme.TripPathTypography
+import com.sejun2.trippath.presentation.util.circleClickable
 import com.sejun2.trippath.presentation.viewmodel.AuthViewModel
 
 @Composable
 fun IntroRoute(
     modifier: Modifier = Modifier,
-    authViewModel: AuthViewModel = viewModel<AuthViewModel>(),
+    authViewModel: AuthViewModel = hiltViewModel<AuthViewModel>(),
+    closeIntroWithoutAuthentication: () -> Unit,
+    onAuthSuccess: () -> Unit
 ) {
-    IntroScreen(
-        modifier,
-        authViewModel::loginWithOauth,
-        authViewModel::logout,// TODO: 건너뛰기 기능 구현 필요
-    )
+    LaunchedEffect(Unit) {
+        authViewModel.uiState.collect { authUiState ->
+            if (authUiState.success == true) {
+                onAuthSuccess()
+            }
+        }
+    }
 
+    IntroScreen(
+        modifier = modifier,
+        loginWithOauth = authViewModel::loginWithOauth,
+        closeIntroWithoutAuthentication = closeIntroWithoutAuthentication,
+    )
 }
 
 @Composable
 fun IntroScreen(
     modifier: Modifier = Modifier,
-    loginWithOauth: (OauthProvider) -> Unit,
+    loginWithOauth: (OauthProvider, Context) -> Unit,
     closeIntroWithoutAuthentication: () -> Unit,
 ) {
     Scaffold(
@@ -68,10 +82,12 @@ fun IntroScreen(
                 Text(
                     modifier = Modifier
                         .padding(8.dp)
-                        .clickable(
-                            true, onClick = closeIntroWithoutAuthentication
-                        ),
-                    text = "건너뛰기",
+                        .clip(shape = CircleShape)
+                        .circleClickable(
+                            true, onClick = closeIntroWithoutAuthentication,
+                        )
+                        .padding(8.dp),
+                    text = stringResource(R.string.skip),
                 )
             }
         }
@@ -108,8 +124,10 @@ fun IntroScreen(
 fun SocialLoginButton(
     modifier: Modifier = Modifier,
     provider: OauthProvider,
-    oauthLogin: (OauthProvider) -> Unit,
+    oauthLogin: (OauthProvider, Context) -> Unit,
 ) {
+    val context = LocalContext.current
+
     Box(
         modifier = modifier
             .padding(
@@ -124,7 +142,7 @@ fun SocialLoginButton(
             .clickable(
                 enabled = true,
                 onClick = {
-                    oauthLogin(provider)
+                    oauthLogin(provider, context)
                 }
             )
             .then(
@@ -175,7 +193,7 @@ private fun getLogoDrawableRes(provider: OauthProvider): Int {
 fun IntroScreenPreview() {
     TripPathTheme {
         IntroScreen(
-            loginWithOauth = {},
+            loginWithOauth = { _, _ -> },
             closeIntroWithoutAuthentication = {}
         )
     }
@@ -186,7 +204,7 @@ fun IntroScreenPreview() {
 fun IntroScreenDarkPreview() {
     TripPathTheme {
         IntroScreen(
-            loginWithOauth = {},
+            loginWithOauth = { _, _ -> },
             closeIntroWithoutAuthentication = {}
         )
     }

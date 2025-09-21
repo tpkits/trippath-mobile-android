@@ -1,6 +1,5 @@
 package com.sejun2.trippath.data.repository
 
-import android.util.Log
 import com.sejun2.trippath.data.auth.GoogleCredentialService
 import com.sejun2.trippath.data.auth.KakaoAuthService
 import com.sejun2.trippath.data.local.TokenDataStore
@@ -18,30 +17,12 @@ import javax.inject.Singleton
 @Singleton
 class AuthRepositoryImpl @Inject constructor(
     private val authApiService: AuthApiService,
-    private val googleCredentialService: GoogleCredentialService,
-    private val kakaoAuthService: KakaoAuthService,
     private val sessionManager: SessionManager,
     private val tokenDataStore: TokenDataStore
 ) : IAuthRepository {
 
     override fun loginWithOauth(provider: OauthProvider): Flow<String> = flow {
-        when (provider) {
-            OauthProvider.GOOGLE -> {
-                val result = googleCredentialService.getGoogleIdToken()
-                result.fold(
-                    onSuccess = { idToken -> emit(idToken) },
-                    onFailure = { exception -> throw exception }
-                )
-            }
-
-            OauthProvider.KAKAO -> {
-                val result = kakaoAuthService.loginWithKakaoAccount()
-                result.fold(
-                    onSuccess = { token -> emit(token.idToken.toString()) },
-                    onFailure = { exception -> throw exception }
-                )
-            }
-        }
+        // Google 로그인시 ActivityContext 의존성으로 인하여 별도 Service 를 viewmodel 에서 호출하는것으로 변경되었습니다.
     }
 
     override fun login(token: String, provider: OauthProvider): Flow<LoginResponse> = flow {
@@ -97,15 +78,12 @@ class AuthRepositoryImpl @Inject constructor(
 
     override suspend fun logout() {
         try {
-            // API 로그아웃 호출
             val response = authApiService.mobileLogout()
 
-            // 성공 여부와 관계없이 로컬 데이터 정리
             tokenDataStore.clearTokens()
             sessionManager.logout()
 
         } catch (e: Exception) {
-            // 네트워크 오류여도 로컬 데이터는 정리
             tokenDataStore.clearTokens()
             sessionManager.logout()
             throw e

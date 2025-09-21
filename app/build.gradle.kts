@@ -5,6 +5,7 @@ plugins {
     alias(libs.plugins.hilt)
     id("com.google.devtools.ksp")
     id("com.google.gms.google-services")
+    id("org.jetbrains.kotlin.plugin.serialization")
 }
 
 android {
@@ -70,6 +71,7 @@ dependencies {
 // Hilt
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
+    implementation(libs.androidx.hilt.navigation.compose)
 
 // Datastore
     implementation(libs.androidx.datastore.core)
@@ -98,6 +100,9 @@ dependencies {
     // KAKAO
 // 카카오 로그인 API 모듈
     implementation(libs.kakao.v2.user)
+
+    // Kotlin serialization
+    implementation(libs.kotlinx.serialization.json)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

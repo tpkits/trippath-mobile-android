@@ -3,13 +3,14 @@ package com.sejun2.trippath.core.navigation
 import androidx.navigation3.runtime.NavKey
 import kotlinx.serialization.Serializable
 
-sealed interface TripPathNavKey : NavKey
+@Serializable
+data object IntroNavKey : NavKey
 
 @Serializable
-data object IntroNavKey : TripPathNavKey
+data object MainNavKey : NavKey
 
 @Serializable
-data object MainNavKey : TripPathNavKey
+data object HomeNavKey : NavKey
 
 @Serializable
-data object HomeNavKey : TripPathNavKey
+data object LoginDialogNavKey : NavKey

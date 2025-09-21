@@ -12,10 +12,14 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color.Companion.Transparent
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -24,13 +28,15 @@ import com.sejun2.trippath.presentation.ui.theme.TripPathColors
 import com.sejun2.trippath.presentation.ui.theme.TripPathTheme
 
 @Composable
-fun SearchBar(modifier: Modifier) {
+fun SearchBar(modifier: Modifier, onValueChange: (String) -> Unit = {}, value: String = "") {
+    val backgroundColor = remember { TripPathColors.Neutral99 }
+
     Box(
         modifier = modifier
             .clip(shape = CircleShape)
             .fillMaxWidth()
             .background(
-                color = TripPathColors.Neutral99,
+                color = backgroundColor,
             ),
     ) {
         Row(
@@ -47,10 +53,29 @@ fun SearchBar(modifier: Modifier) {
                 contentDescription = "image_ic_search"
             )
             Spacer(Modifier.width(8.dp))
-            Text(
-                "어디로 가시나요?", style = MaterialTheme.typography.labelMedium.copy(
-                    color = TripPathColors.TextSubtler
-                )
+            TextField(
+                value = value,
+                textStyle = MaterialTheme.typography.labelMedium.copy(
+                    color = TripPathColors.TextDefault
+                ),
+                onValueChange = onValueChange,
+                colors = TextFieldDefaults.colors(
+                    errorContainerColor = Transparent,
+                    focusedContainerColor = Transparent,
+                    disabledContainerColor = Transparent,
+                    unfocusedContainerColor = Transparent,
+                    unfocusedIndicatorColor = Transparent,
+                    focusedIndicatorColor = Transparent
+                ),
+
+                placeholder = {
+                    Text(
+                        text = "어디로 가시나요?",
+                        style = MaterialTheme.typography.labelMedium.copy(
+                            color = TripPathColors.TextSubtler
+                        )
+                    )
+                }
             )
         }
     }

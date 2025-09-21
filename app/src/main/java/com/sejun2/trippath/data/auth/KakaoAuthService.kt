@@ -5,6 +5,7 @@ import com.kakao.sdk.auth.model.OAuthToken
 import com.kakao.sdk.user.UserApiClient
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import timber.log.Timber
 import javax.inject.Singleton
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
@@ -35,6 +36,8 @@ class KakaoAuthService(private val context: Context) {
                         token != null -> Result.success(token)
                         else -> Result.failure(Exception("Unknown error"))
                     }
+                    Timber.d("Kakao 로그인 결과: $result")
+
                     continuation.resume(result)
                 }
             }

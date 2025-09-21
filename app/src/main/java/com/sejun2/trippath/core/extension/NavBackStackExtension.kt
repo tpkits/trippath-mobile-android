@@ -10,3 +10,8 @@ fun SnapshotStateList<*>.back() {
     if (!canGoBack()) return
     removeLastOrNull()
 }
+
+fun SnapshotStateList<Any>.replace(key: Any) {
+    removeLastOrNull()
+    add(key)
+}
