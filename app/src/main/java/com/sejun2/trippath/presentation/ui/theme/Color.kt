@@ -156,5 +156,5 @@ val DarkColorScheme = androidx.compose.material3.darkColorScheme(
     surfaceContainerLow = TripPathColors.Neutral10,
     surfaceContainer = TripPathColors.Neutral20,
     surfaceContainerHigh = TripPathColors.Neutral30,
-    surfaceContainerHighest = TripPathColors.Neutral40
+    surfaceContainerHighest = TripPathColors.Neutral40,
 )

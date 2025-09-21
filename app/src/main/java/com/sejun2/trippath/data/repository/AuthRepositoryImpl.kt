@@ -1,7 +1,5 @@
 package com.sejun2.trippath.data.repository
 
-import com.sejun2.trippath.data.auth.GoogleCredentialService
-import com.sejun2.trippath.data.auth.KakaoAuthService
 import com.sejun2.trippath.data.local.TokenDataStore
 import com.sejun2.trippath.data.network.api.AuthApiService
 import com.sejun2.trippath.data.network.dto.request.LoginRequest

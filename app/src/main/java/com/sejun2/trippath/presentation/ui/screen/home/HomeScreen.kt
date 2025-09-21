@@ -1,7 +1,6 @@
 @file:OptIn(ExperimentalMaterial3Api::class)
 
 import android.content.res.Configuration
-import androidx.collection.LongLongPair
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -10,83 +9,70 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
-import androidx.compose.foundation.layout.systemBars
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material3.BottomSheetScaffoldState
-import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SheetState
-import androidx.compose.material3.Text
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.sejun2.trippath.presentation.ui.component.SearchBar
 import com.sejun2.trippath.presentation.ui.component.TripPathBottomNavBar
 import com.sejun2.trippath.presentation.ui.component.TripPathBottomNavItems
 import com.sejun2.trippath.presentation.ui.component.TripPathMainAppBar
 import com.sejun2.trippath.presentation.ui.theme.TripPathTheme
 import com.sejun2.trippath.presentation.util.tripPathDefaultContentPadding
+import com.sejun2.trippath.presentation.viewmodel.AuthViewModel
 import timber.log.Timber
 
 
 @Composable
-fun rememberLoginDialogState(): Pair<Boolean, SheetState> {
-    var showBottomSheet by remember { mutableStateOf(false) }
-    val sheetState = rememberModalBottomSheetState()
-
-    if (showBottomSheet) {
-        ModalBottomSheet(
-            onDismissRequest = {
-                showBottomSheet = false
-            },
-            sheetState = sheetState
-        ) {
-            Button(onClick = {
-                showBottomSheet = false
-            }) {
-                Text("Hide bottom sheet")
-            }
-        }
-    }
-    return Pair<Boolean, SheetState>(showBottomSheet, sheetState)
-}
-
-@Composable
 fun HomeRoute(
     modifier: Modifier = Modifier,
+    authViewModel: AuthViewModel = hiltViewModel<AuthViewModel>(),
 ) {
-    val loginDialogState = rememberLoginDialogState()
+    var loginBottomSheetVisibility by rememberSaveable { mutableStateOf(false) }
+
+    LoginBottomSheetDialog(
+        isVisible = loginBottomSheetVisibility,
+        loginWithOauth = authViewModel::loginWithOauth
+    ) {
+        Timber.d("loginBottomSheetVisibility: $it")
+        loginBottomSheetVisibility = it
+    }
 
     HomeScreen(
         modifier,
-        loginDialogState.first,
-        onLoginDialogStateChanged = {}
+        openLoginBottomSheet = {
+            loginBottomSheetVisibility = true
+        },
+        closeLoginBottomSheet = {
+            loginBottomSheetVisibility = false
+        }
     )
 }
 
 @Composable
 fun HomeScreen(
     modifier: Modifier,
-    openLoginDialog: Boolean,
-    onLoginDialogStateChanged: (Boolean) -> Unit
+    openLoginBottomSheet: () -> Unit = {},
+    closeLoginBottomSheet: () -> Unit = {},
 ) {
     var searchQuery by rememberSaveable { mutableStateOf("") }
+
+    val scope = rememberCoroutineScope()
 
     Scaffold(
         modifier = modifier
@@ -99,8 +85,7 @@ fun HomeScreen(
         floatingActionButton = {
             FloatingActionButton(
                 onClick = {
-                    Timber.d("openLoginDialog = $openLoginDialog")
-                    onLoginDialogStateChanged(!openLoginDialog)
+                    openLoginBottomSheet()
                 },
                 shape = CircleShape,
                 containerColor = MaterialTheme.colorScheme.primary,
@@ -135,8 +120,6 @@ fun HomeScreenPreview() {
     TripPathTheme {
         HomeScreen(
             modifier = Modifier,
-            openLoginDialog = true,
-            onLoginDialogStateChanged = {}
         )
     }
 }
@@ -147,8 +130,6 @@ fun HomeScreenPreviewDark() {
     TripPathTheme {
         HomeScreen(
             modifier = Modifier,
-            openLoginDialog = true,
-            onLoginDialogStateChanged = {}
         )
     }
 }
