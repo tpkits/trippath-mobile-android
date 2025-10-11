@@ -29,7 +29,7 @@ fun TripPathTheme(
         else -> LightColorScheme
     }
 
-    DynamicStatusBarController(colorScheme.background)
+//    DynamicStatusBarController(colorScheme.background)
 
     MaterialTheme(
         colorScheme = colorScheme,
