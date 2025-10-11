@@ -26,6 +26,7 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -74,6 +75,7 @@ fun LastTripCard(
                         RoundedCornerShape(12.dp)
                     ),
                 contentDescription = null,
+                contentScale = ContentScale.FillHeight
             )
             Spacer(
                 Modifier
