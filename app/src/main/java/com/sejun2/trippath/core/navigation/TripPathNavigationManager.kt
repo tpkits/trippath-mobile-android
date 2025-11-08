@@ -12,6 +12,7 @@ import androidx.navigation3.runtime.entry
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
 import com.sejun2.trippath.presentation.ui.screen.auth.IntroRoute
+import com.sejun2.trippath.presentation.ui.screen.home.TripMainRoute
 
 /// 앱 전반적인 설정이 저장되는 composable
 @Composable
@@ -43,6 +44,12 @@ fun rememberTripPathAppState(): TripPathAppState {
         entry<HomeNavKey> {
             HomeRoute(
                 modifier = Modifier,
+                navigateToTripMainScreen = { navBackStack.add(TripMainNavKey) }
+            )
+        }
+        entry<TripMainNavKey> {
+            TripMainRoute(
+                modifier = Modifier
             )
         }
     }

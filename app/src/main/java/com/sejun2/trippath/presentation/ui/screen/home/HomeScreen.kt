@@ -18,7 +18,6 @@ import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
@@ -27,7 +26,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -39,7 +37,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -49,10 +46,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
-import androidx.viewpager.widget.ViewPager
 import coil3.compose.LocalAsyncImagePreviewHandler
-import com.sejun2.trippath.R
-import com.sejun2.trippath.presentation.ui.component.SearchBar
 import com.sejun2.trippath.presentation.ui.component.TripPathBottomNavBar
 import com.sejun2.trippath.presentation.ui.component.TripPathBottomNavItems
 import com.sejun2.trippath.presentation.ui.component.TripPathMainAppBar
@@ -70,6 +64,7 @@ import timber.log.Timber
 fun HomeRoute(
     modifier: Modifier = Modifier,
     authViewModel: AuthViewModel = hiltViewModel<AuthViewModel>(),
+    navigateToTripMainScreen: () -> Unit = {},
 ) {
     var loginBottomSheetVisibility by rememberSaveable { mutableStateOf(false) }
 
@@ -88,7 +83,8 @@ fun HomeRoute(
         },
         closeLoginBottomSheet = {
             loginBottomSheetVisibility = false
-        }
+        },
+        onExtraButtonClick = navigateToTripMainScreen
     )
 }
 
@@ -97,11 +93,8 @@ fun HomeScreen(
     modifier: Modifier,
     openLoginBottomSheet: () -> Unit = {},
     closeLoginBottomSheet: () -> Unit = {},
+    onExtraButtonClick: () -> Unit = {}
 ) {
-    var searchQuery by rememberSaveable { mutableStateOf("") }
-
-    val scope = rememberCoroutineScope()
-
     Scaffold(
         modifier = modifier
             .fillMaxSize()
@@ -152,7 +145,7 @@ fun HomeScreen(
                     title = "This is title",
                     dateInterval = "This is date-interval",
                     city = "City",
-                    onExtraButtonClick = {}
+                    onExtraButtonClick = onExtraButtonClick
                 )
                 Spacer(
                     Modifier.padding(12.dp)
@@ -191,7 +184,9 @@ fun HomeScreen(
 @Composable
 fun LastTripCardListView() {
     LazyColumn(
-        modifier = Modifier.fillMaxWidth().heightIn(min = 0.dp, max = 450.dp)
+        modifier = Modifier
+            .fillMaxWidth()
+            .heightIn(min = 0.dp, max = 450.dp)
     ) {
         item {
             LastTripCard(

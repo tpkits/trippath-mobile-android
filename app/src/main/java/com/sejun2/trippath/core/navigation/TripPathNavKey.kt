@@ -14,3 +14,6 @@ data object HomeNavKey : NavKey
 
 @Serializable
 data object LoginDialogNavKey : NavKey
+
+@Serializable
+data object TripMainNavKey : NavKey
