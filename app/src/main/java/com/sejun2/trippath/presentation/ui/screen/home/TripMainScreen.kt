@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalMaterial3Api::class)
+
 package com.sejun2.trippath.presentation.ui.screen.home
 
 import androidx.compose.animation.AnimatedVisibility
@@ -49,6 +51,7 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.sejun2.trippath.presentation.ui.theme.TripPathTheme
 import timber.log.Timber
 
 @Composable
@@ -62,9 +65,10 @@ fun TripMainRoute(
 @Composable
 fun TripMainScreen(
     modifier: Modifier = Modifier,
+    initialSheetValue: SheetValue = SheetValue.PartiallyExpanded
 ) {
     val bottomSheetState = rememberStandardBottomSheetState(
-        initialValue = SheetValue.PartiallyExpanded,
+        initialValue = initialSheetValue,
         skipHiddenState = true,
     )
 
@@ -336,29 +340,20 @@ fun rememberScreenHeightDp(): Dp {
     return configuration.screenHeightDp.dp// 화면 높이를 Dp 단위로 반환
 }
 
-@Preview
-@Composable
-fun TripMainRoutePreview() {
-    TripMainRoute()
-}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Preview
 @Composable
 fun TripMainScreenPreview() {
-    TripMainScreen()
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Preview
-@Composable
-private fun BackgroundContentPreview() {
-    BackgroundContent(appBarAlpha = 0.5f, isAppbarEnabled = true)
+    TripPathTheme {
+        TripMainScreen()
+    }
 }
 
 @Preview
 @Composable
-private fun BottomSheetContentPreview() {
-    BottomSheetContent()
+fun TripMainScreenPreview2() {
+    TripPathTheme() {
+        TripMainScreen(initialSheetValue = SheetValue.Expanded)
+    }
 }
-
