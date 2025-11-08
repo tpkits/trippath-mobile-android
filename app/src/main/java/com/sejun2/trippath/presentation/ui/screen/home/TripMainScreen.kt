@@ -3,6 +3,7 @@
 package com.sejun2.trippath.presentation.ui.screen.home
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.TweenSpec
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.fadeIn
@@ -14,6 +15,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -39,6 +41,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.material3.rememberStandardBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -46,8 +49,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
+import androidx.compose.ui.input.nestedscroll.NestedScrollSource
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -76,6 +84,13 @@ fun TripMainScreen(
         bottomSheetState = bottomSheetState
     )
 
+    val density = LocalDensity.current
+    val dragThreshold = with(density) { 50.dp.toPx() } // threshold in pixels
+
+    var accumulatedDrag by remember { mutableStateOf(0f) }
+    var swipeEnabled by remember { mutableStateOf(true) }
+
+
     val sheetBenchmark =
         64.dp + WindowInsets.systemBars
             .asPaddingValues()
@@ -92,6 +107,13 @@ fun TripMainScreen(
             } catch (e: Exception) {
                 return@derivedStateOf 0f
             }
+        }
+    }
+
+    // Check if sheet is expanded
+    val isExpanded by remember {
+        derivedStateOf {
+            sheetProgress == 1f
         }
     }
 
@@ -115,6 +137,42 @@ fun TripMainScreen(
         .asPaddingValues()
         .calculateBottomPadding()
 
+    LaunchedEffect(bottomSheetState.currentValue) {
+        if (bottomSheetState.currentValue != SheetValue.Expanded) {
+            accumulatedDrag = 0f
+            swipeEnabled = true
+        } else {
+            swipeEnabled = false
+            accumulatedDrag = 0f
+        }
+    }
+
+    val nestedScrollConnection = remember {
+        object : NestedScrollConnection {
+            override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
+                if (isExpanded && !swipeEnabled) {
+                    if (available.y > 0) {
+                        accumulatedDrag += available.y
+
+                        if (accumulatedDrag >= dragThreshold) {
+                            swipeEnabled = true
+                        }
+                    }
+                }
+                return Offset.Zero
+            }
+
+            override fun onPostScroll(
+                consumed: Offset,
+                available: Offset,
+                source: NestedScrollSource
+            ): Offset {
+                return Offset.Zero
+            }
+        }
+    }
+
+
 
 
     BottomSheetScaffold(
@@ -127,11 +185,14 @@ fun TripMainScreen(
         sheetDragHandle = {},
         sheetContainerColor = MaterialTheme.colorScheme.surface,
         sheetShadowElevation = 0.dp,
+        sheetSwipeEnabled = swipeEnabled,
         sheetContent = {
             Box(
-                modifier = Modifier.heightIn(max = rememberScreenHeightDp() - TopAppBarDefaults.TopAppBarExpandedHeight - systemBarTopHeight - bottomNavigationHeight + 1.dp)
+                modifier = Modifier
+                    .heightIn(max = rememberScreenHeightDp() - TopAppBarDefaults.TopAppBarExpandedHeight - systemBarTopHeight - bottomNavigationHeight + 1.dp)
+                    .nestedScroll(nestedScrollConnection)
             ) {
-                BottomSheetContent()
+                BottomSheetContent(isExpanded = isExpanded)
             }
         },
         modifier = modifier
@@ -142,7 +203,6 @@ fun TripMainScreen(
         ) {
             BackgroundContent(
                 isAppbarEnabled = isAppbarEnabled.value,
-                appBarAlpha = appBarAlpha
             )
         }
     }
@@ -151,7 +211,6 @@ fun TripMainScreen(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun BackgroundContent(
-    appBarAlpha: Float,
     isAppbarEnabled: Boolean
 ) {
     Box(
@@ -304,7 +363,7 @@ private fun BackgroundContent(
 }
 
 @Composable
-private fun BottomSheetContent() {
+private fun BottomSheetContent(isExpanded: Boolean) {
     Box(modifier = Modifier.background(color = Color.Transparent)) {
         LazyColumn(
             contentPadding = PaddingValues(16.dp),
@@ -331,6 +390,22 @@ private fun BottomSheetContent() {
                 }
             }
         }
+
+        AnimatedVisibility(
+            visible = !isExpanded,
+            enter = fadeIn(
+                animationSpec = TweenSpec(
+                    durationMillis = 300,
+                )
+            ),
+            exit = fadeOut(
+                animationSpec = TweenSpec(
+                    durationMillis = 150,
+                )
+            ),
+        ) {
+            DragHandle()
+        }
     }
 }
 
@@ -338,6 +413,26 @@ private fun BottomSheetContent() {
 fun rememberScreenHeightDp(): Dp {
     val configuration = LocalConfiguration.current
     return configuration.screenHeightDp.dp// 화면 높이를 Dp 단위로 반환
+}
+
+@Composable
+private fun DragHandle() {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 12.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        Box(
+            modifier = Modifier
+                .width(32.dp)
+                .height(4.dp)
+                .background(
+                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.4f),
+                    shape = RoundedCornerShape(2.dp)
+                )
+        )
+    }
 }
 
 
