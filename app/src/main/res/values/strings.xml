@@ -1,9 +1,3 @@
 <resources>
     <string name="app_name">TripPath</string>
-    <string name="navigation_home">홈</string>
-    <string name="navigation_search">검색</string>
-    <string name="navigation_bookmark">북마크</string>
-    <string name="navigation_bills">비용</string>
-    <string name="navigation_profile">계정</string>
-    <string name="skip">Skip</string>
 </resources>

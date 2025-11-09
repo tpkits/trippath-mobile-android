@@ -22,6 +22,7 @@ nav3Core = "1.0.0-alpha07"
 lifecycleViewmodelNav3 = "1.0.0-alpha04"
 kotlinSerialization = "2.2.10"
 kotlinxSerializationCore = "1.9.0"
+kotlinxCoroutines = "1.9.0"
 
 # Network
 retrofit = "2.11.0"
@@ -49,6 +50,7 @@ androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecyc
 androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activityCompose" }
 androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
 androidx-ui = { group = "androidx.compose.ui", name = "ui" }
+androidx-runtime = { group = "androidx.compose.runtime", name = "runtime" }
 androidx-ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics" }
 androidx-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
 androidx-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
@@ -75,6 +77,8 @@ hilt-compiler = { group = "com.google.dagger", name = "hilt-compiler", version.r
 
 # Network
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
+kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinxCoroutines" }
+kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "kotlinxCoroutines" }
 retrofit-core = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = "retrofit" }
 retrofit-moshi = { group = "com.squareup.retrofit2", name = "converter-moshi", version.ref = "retrofit" }
 okhttp-core = { group = "com.squareup.okhttp3", name = "okhttp", version.ref = "okhttp" }
@@ -86,9 +90,12 @@ androidx-datastore-core = { group = "androidx.datastore", name = "datastore-core
 timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
 kakao-v2-user = { module = "com.kakao.sdk:v2-user", version.ref = "kakaoV2User" }
 kakao-v2-all = { module = "com.kakao.sdk:v2-all", version.ref = "kakaoV2All" }
+android-gradle-plugin = { group = "com.android.tools.build", name = "gradle", version.ref = "agp" }
+kotlin-gradle-plugin = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version.ref = "kotlin" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
+android-library = { id = "com.android.library", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }

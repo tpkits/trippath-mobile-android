@@ -1,6 +1,5 @@
 package com.sejun2.trippath.core.navigation
 
-import HomeRoute
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.remember
@@ -12,7 +11,8 @@ import androidx.navigation3.runtime.entry
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
 import com.sejun2.trippath.presentation.ui.screen.auth.IntroRoute
-import com.sejun2.trippath.presentation.ui.screen.home.TripMainRoute
+import com.sejun2.trippath.presentation.ui.screen.home.HomeRoute
+import com.sejun2.trippath.presentation.ui.screen.tripmain.TripMainRoute
 
 /// 앱 전반적인 설정이 저장되는 composable
 @Composable

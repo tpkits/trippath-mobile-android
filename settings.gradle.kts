@@ -20,5 +20,16 @@ dependencyResolutionManagement {
     }
 }
 
+includeBuild("build-logic")
+
 rootProject.name = "TripPath"
-include(":app")
+include(
+    ":app",
+    ":core:common",
+    ":core:data",
+    ":core:designsystem",
+    ":core:domain",
+    ":feature:auth",
+    ":feature:home",
+    ":feature:tripmain"
+)

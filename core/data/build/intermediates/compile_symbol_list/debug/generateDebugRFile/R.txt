@@ -1,0 +1,1 @@
+int string module_name_core_data 0x0

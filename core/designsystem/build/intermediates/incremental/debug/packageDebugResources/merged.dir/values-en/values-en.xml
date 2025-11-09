@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="navigation_bills">Bills</string>
+    <string name="navigation_bookmark">Bookmark</string>
+    <string name="navigation_home">Home</string>
+    <string name="navigation_profile">Profile</string>
+    <string name="navigation_search">Search</string>
+</resources>
