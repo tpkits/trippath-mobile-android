@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="auth_login_prompt">로그인하여
+나만의 여행을 계획하세요.</string>
+    <string name="auth_skip">건너뛰기</string>
+    <string name="module_name_feature_auth">feature-auth</string>
+</resources>

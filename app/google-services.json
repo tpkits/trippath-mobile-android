@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "701051835178",
+    "project_id": "trippath-907bb",
+    "storage_bucket": "trippath-907bb.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:701051835178:android:0a330e204bf9114543c453",
+        "android_client_info": {
+          "package_name": "com.sejun2.trippath"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "701051835178-g6fqhgtfm05oshototjtf0e1usftpvft.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.sejun2.trippath",
+            "certificate_hash": "117d55457f4882221728f8b3700c4fe244d2db15"
+          }
+        },
+        {
+          "client_id": "701051835178-ga1hs198ck3vjt89q69humqsgi4j7ic8.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAfFtA-Q86-AjHFmo5ywqL32sVWWT-UodI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "701051835178-ga1hs198ck3vjt89q69humqsgi4j7ic8.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

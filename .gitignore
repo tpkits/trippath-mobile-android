@@ -1,6 +1,9 @@
 # cladue config
 .claude/
 
+# codex config
+AGENTS.md
+
 # intellij idea sets
 .idea/
 

@@ -1,0 +1,4 @@
+com.sejun2.trippath.feature.auth
+string auth_login_prompt
+string auth_skip
+string module_name_feature_auth

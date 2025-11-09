@@ -1,0 +1,7 @@
+<resources>
+    <string name="navigation_home">Home</string>
+    <string name="navigation_search">Search</string>
+    <string name="navigation_bookmark">Bookmark</string>
+    <string name="navigation_bills">Bills</string>
+    <string name="navigation_profile">Profile</string>
+</resources>

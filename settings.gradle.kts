@@ -16,8 +16,20 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
+        maven { url = java.net.URI("https://devrepo.kakao.com/nexus/content/groups/public/") }
     }
 }
 
+includeBuild("build-logic")
+
 rootProject.name = "TripPath"
-include(":app")
+include(
+    ":app",
+    ":core:common",
+    ":core:data",
+    ":core:designsystem",
+    ":core:domain",
+    ":feature:auth",
+    ":feature:home",
+    ":feature:tripmain"
+)

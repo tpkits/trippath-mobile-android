@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="navigation_bills">비용</string>
+    <string name="navigation_bookmark">북마크</string>
+    <string name="navigation_home">홈</string>
+    <string name="navigation_profile">계정</string>
+    <string name="navigation_search">검색</string>
+</resources>
