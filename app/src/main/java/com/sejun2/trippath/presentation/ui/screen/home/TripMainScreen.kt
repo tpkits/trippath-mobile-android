@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -23,6 +22,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBars
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -56,8 +56,8 @@ import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.sejun2.trippath.presentation.ui.theme.TripPathTheme
 import timber.log.Timber
@@ -69,12 +69,12 @@ fun TripMainRoute(
     TripMainScreen(modifier)
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TripMainScreen(
     modifier: Modifier = Modifier,
     initialSheetValue: SheetValue = SheetValue.PartiallyExpanded
 ) {
+
     val bottomSheetState = rememberStandardBottomSheetState(
         initialValue = initialSheetValue,
         skipHiddenState = true,
@@ -90,44 +90,68 @@ fun TripMainScreen(
     var accumulatedDrag by remember { mutableStateOf(0f) }
     var swipeEnabled by remember { mutableStateOf(true) }
 
+    // Expanded와 PartiallyExpanded 상태의 offset을 저장
+    var expandedOffset by remember { mutableStateOf<Float?>(null) }
+    var partiallyExpandedOffset by remember { mutableStateOf<Float?>(null) }
 
-    val sheetBenchmark =
-        64.dp + WindowInsets.systemBars
-            .asPaddingValues()
-            .calculateTopPadding() + WindowInsets.systemBars
-            .asPaddingValues()
-            .calculateBottomPadding() + 16.dp
+    // 각 상태에서의 offset 값을 기록
+    LaunchedEffect(bottomSheetState.currentValue) {
+        try {
+            val currentOffset = bottomSheetState.requireOffset()
+            when (bottomSheetState.currentValue) {
+                SheetValue.Expanded -> expandedOffset = currentOffset
+                SheetValue.PartiallyExpanded -> partiallyExpandedOffset = currentOffset
+                else -> {}
+            }
+        } catch (e: Exception) {
+            Timber.e(e)
+        }
+    }
 
     val sheetProgress by remember {
         derivedStateOf {
             try {
                 val currentOffset = bottomSheetState.requireOffset()
+                val expanded = expandedOffset
+                val partiallyExpanded = partiallyExpandedOffset
 
-                if (currentOffset.dp < sheetBenchmark + 100.dp) return@derivedStateOf 1f else return@derivedStateOf 0f
-            } catch (e: Exception) {
+                if (expanded == null || partiallyExpanded == null) {
+                    return@derivedStateOf 0f
+                }
+
+                val progress = if (partiallyExpanded != expanded) {
+                    ((partiallyExpanded - currentOffset) / (partiallyExpanded - expanded)).coerceIn(
+                        0f,
+                        1f
+                    )
+                } else {
+                    0f
+                }
+
+                progress
+            } catch (_: Exception) {
                 return@derivedStateOf 0f
             }
         }
     }
 
-    // Check if sheet is expanded
-    val isExpanded by remember {
+    val isExpanded by remember(sheetProgress) {
         derivedStateOf {
             sheetProgress == 1f
         }
     }
 
     val cornerRadius by animateDpAsState(
-        targetValue = if (sheetProgress >= 0.95f) 0.dp else 24.dp,
+        targetValue = if (isExpanded) 0.dp else 24.dp,
         label = "cornerRadius"
     )
 
     val appBarAlpha by animateFloatAsState(
-        targetValue = if (sheetProgress >= 0.95f) sheetProgress else 0f,
+        targetValue = if (isExpanded) sheetProgress else 0f,
         label = "appBarAlpha"
     )
 
-    val isAppbarEnabled = derivedStateOf { appBarAlpha > 0.0f }
+    val isAppbarEnabled by derivedStateOf { appBarAlpha > 0.0f }
 
     val systemBarTopHeight = WindowInsets.systemBars
         .asPaddingValues()
@@ -137,8 +161,8 @@ fun TripMainScreen(
         .asPaddingValues()
         .calculateBottomPadding()
 
-    LaunchedEffect(bottomSheetState.currentValue) {
-        if (bottomSheetState.currentValue != SheetValue.Expanded) {
+    LaunchedEffect(isExpanded) {
+        if (!isExpanded) {
             accumulatedDrag = 0f
             swipeEnabled = true
         } else {
@@ -152,6 +176,7 @@ fun TripMainScreen(
             override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
                 if (isExpanded && !swipeEnabled) {
                     if (available.y > 0) {
+                        // 아래로 드래그 중 (pull down)
                         accumulatedDrag += available.y
 
                         if (accumulatedDrag >= dragThreshold) {
@@ -159,6 +184,7 @@ fun TripMainScreen(
                         }
                     }
                 }
+
                 return Offset.Zero
             }
 
@@ -202,13 +228,12 @@ fun TripMainScreen(
                 .fillMaxSize()
         ) {
             BackgroundContent(
-                isAppbarEnabled = isAppbarEnabled.value,
+                isAppbarEnabled = isAppbarEnabled,
             )
         }
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun BackgroundContent(
     isAppbarEnabled: Boolean
@@ -436,7 +461,6 @@ private fun DragHandle() {
 }
 
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Preview
 @Composable
 fun TripMainScreenPreview() {
