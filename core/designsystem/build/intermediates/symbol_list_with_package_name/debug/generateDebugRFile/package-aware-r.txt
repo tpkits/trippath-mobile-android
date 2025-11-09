@@ -1,0 +1,21 @@
+com.sejun2.trippath.core.designsystem
+drawable ic_logo_google
+drawable ic_logo_kakao
+drawable ic_logo_trippath
+drawable ic_navigation_bills
+drawable ic_navigation_bookmark
+drawable ic_navigation_home
+drawable ic_navigation_profile
+drawable ic_navigation_search
+drawable ic_search
+font pretendard
+font pretendard_bold
+font pretendard_light
+font pretendard_medium
+font pretendard_regular
+font pretendard_semibold
+string navigation_bills
+string navigation_bookmark
+string navigation_home
+string navigation_profile
+string navigation_search

@@ -1,0 +1,1 @@
+int string module_name_core_domain 0x0

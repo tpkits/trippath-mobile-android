@@ -1,0 +1,1 @@
+-keep,allowobfuscation,allowshrinking class com.sejun2.trippath.presentation.viewmodel.AuthViewModel

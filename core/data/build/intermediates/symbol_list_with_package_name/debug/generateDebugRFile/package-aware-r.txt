@@ -1,0 +1,2 @@
+com.sejun2.trippath.core.data
+string module_name_core_data
